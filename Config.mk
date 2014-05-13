@@ -208,7 +208,7 @@ SEABIOS_UPSTREAM_TAG ?= rel-1.6.3.2
 # Sun Mar 11 09:27:07 2012 -0400
 # Update version to 1.6.3.2
 
-ETHERBOOT_NICS ?= rtl8139 8086100e
+ETHERBOOT_NICS ?= 10ec8139 8086100e
 
 # Specify which qemu-dm to use. This may be `ioemu' to use the old
 # Mercurial in-tree version, or a local directory, or a git URL.
