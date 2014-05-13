@@ -43,7 +43,11 @@ from xen.util import oshelp
 from xen.util import utils
 from xen.xend import osdep
 
-xc = xen.lowlevel.xc.xc()
+try:
+    xc = xen.lowlevel.xc.xc()
+except Exception:
+    print >>sys.stderr, ('xend/image.py: Error connecting to hypervisor')
+    os._exit(1)
 
 MAX_GUEST_CMDLINE = 1024
 
