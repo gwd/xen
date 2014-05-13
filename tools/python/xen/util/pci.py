@@ -1275,7 +1275,12 @@ class PciDevice:
             pass
 
     def get_info_from_sysfs(self):
-        self.find_capability(0x11)
+        try:
+            self.find_capability(0x11)
+        except PciDeviceParseError, err:
+            log.error("Caught '%s'" % err)
+            return False
+
         sysfs_mnt = find_sysfs_mnt()
         if sysfs_mnt == None:
             return False
