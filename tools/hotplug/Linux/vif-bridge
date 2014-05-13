@@ -101,10 +101,6 @@ case "$command" in
         ;;
 esac
 
-if [ "$type_if" = vif ]; then
-    handle_iptable
-fi
-
 call_hooks vif post
 
 log debug "Successful vif-bridge $command for $dev, bridge $bridge."
