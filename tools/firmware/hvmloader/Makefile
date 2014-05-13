@@ -70,7 +70,7 @@ endif
 ifeq ($(CONFIG_SEABIOS),y)
 OBJS += seabios.o
 CFLAGS += -DENABLE_SEABIOS
-SEABIOS_ROM := $(SEABIOS_DIR)/out/bios.bin
+SEABIOS_ROM := /usr/share/seabios/bios.bin
 ROMS += $(SEABIOS_ROM)
 endif
 
