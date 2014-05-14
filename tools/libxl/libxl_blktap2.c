@@ -29,20 +29,15 @@ char *libxl__blktap_devpath(libxl__gc *gc,
 {
     const char *type;
     char *params, *devname = NULL;
-    tap_list_t tap;
     int err;
 
     type = libxl__device_disk_string_of_format(format);
-    err = tap_ctl_find(type, disk, &tap);
-    if (err == 0) {
-        devname = libxl__sprintf(gc, "/dev/xen/blktap-2/tapdev%d", tap.minor);
-        if (devname)
-            return devname;
-    }
 
     params = libxl__sprintf(gc, "%s:%s", type, disk);
-    err = tap_ctl_create(params, &devname);
+    fprintf(stderr, "DEBUG %s %d %s\n",__func__,__LINE__,params);
+    err = tap_ctl_create(params, &devname, 0, -1, 0);
     if (!err) {
+        fprintf(stderr, "DEBUG %s %d %s\n",__func__,__LINE__,devname);
         libxl__ptr_add(gc, devname);
         return devname;
     }
@@ -55,7 +50,10 @@ int libxl__device_destroy_tapdisk(libxl__gc *gc, const char *params)
 {
     char *type, *disk;
     int err;
-    tap_list_t tap;
+	struct list_head list = LIST_HEAD_INIT(list);
+	tap_list_t *entry;
+    int minor = -1;
+    pid_t pid = -1;
 
     type = libxl__strdup(gc, params);
 
@@ -65,19 +63,34 @@ int libxl__device_destroy_tapdisk(libxl__gc *gc, const char *params)
         return ERROR_INVAL;
     }
 
+    fprintf(stderr, "DEBUG %s %d type=%s disk=%s\n",__func__,__LINE__,type,disk);
     *disk++ = '\0';
 
-    err = tap_ctl_find(type, disk, &tap);
-    if (err < 0) {
-        /* returns -errno */
+    err = tap_ctl_list(&list);
+    if (err)
+        return err;
+    tap_list_for_each_entry(entry, &list) {
+		if (type && (!entry->type || strcmp(entry->type, type)))
+			continue;
+
+		if (disk && (!entry->path || strcmp(entry->path, disk)))
+			continue;
+
+        minor = entry->minor;
+        pid = entry->pid;
+		break;
+	}
+	tap_ctl_list_free(&list);
+
+    if (minor < 0) {
         LOGEV(ERROR, -err, "Unable to find type %s disk %s", type, disk);
         return ERROR_FAIL;
     }
 
-    err = tap_ctl_destroy(tap.id, tap.minor);
+    err = tap_ctl_destroy(pid, minor, 1, NULL);
     if (err < 0) {
         LOGEV(ERROR, -err, "Failed to destroy tap device id %d minor %d",
-              tap.id, tap.minor);
+              pid, minor);
         return ERROR_FAIL;
     }
 

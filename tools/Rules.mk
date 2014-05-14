@@ -46,9 +46,9 @@ LIBXL_BLKTAP ?= n
 endif
 
 ifeq ($(LIBXL_BLKTAP),y)
-CFLAGS_libblktapctl = -I$(XEN_BLKTAP2)/control -I$(XEN_BLKTAP2)/include $(CFLAGS_xeninclude)
-LDLIBS_libblktapctl = -L$(XEN_BLKTAP2)/control -lblktapctl
-SHLIB_libblktapctl  = -Wl,-rpath-link=$(XEN_BLKTAP2)/control
+CFLAGS_libblktapctl = -I$(XEN_BLKTAP2)/include $(CFLAGS_xeninclude)
+LDLIBS_libblktapctl = -L$(XEN_BLKTAP2)/control/.libs -lblktapctl
+SHLIB_libblktapctl  = -Wl,-rpath-link=$(XEN_BLKTAP2)/control/.libs
 else
 CFLAGS_libblktapctl =
 LDLIBS_libblktapctl =
