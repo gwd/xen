@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# mktarball: Make a release tarball (including xen, qemu, and qemu-traditional)
+#
+# Takes 2 arguments, the path to the dist directory and the version
+#
+# To run manually from the xen root:
+#  make -C tools qemu-xen-dir-find
+#  make -C tools qemu-xen-dir-force-update
+#  make -C tools qemu-xen-traditional-dir-force-update
+#  make -C tools qemu-xen-traditional-dir-force-update
+#  mktarball $PWD
+
+function finish {
+    [[ -n "$tdir" ]] && rm -rf $tdir
+}
+trap finish EXIT
+
+set -e
+
+if [[ -z "$1" ]] ; then
+  echo "usage: $0 path-to-XEN_ROOT [xen-version]"
+  exit 1
+fi
+
+xen_root="$1"
+
+if [[ -n "$2" ]] ; then
+    desc="$2"
+else
+    desc="$(git describe)"
+fi
+
+
+tdir="$(mktemp -d $xen_root/dist/xen.XXXXXXXX)" || exit 1
+
+mkdir $tdir/xen-$desc || exit 1
+
+git archive --format=tar HEAD |tar Cxf $tdir/xen-$desc - || exit 1
+
+mkdir $tdir/xen-$desc/tools/qemu-xen || exit 1
+mkdir $tdir/xen-$desc/tools/qemu-xen-traditional || exit 1
+
+pushd $xen_root/tools/qemu-xen-traditional-dir-remote || exit 1
+git archive --format=tar HEAD |tar Cxf $tdir/xen-$desc/tools/qemu-xen-traditional - || exit 1
+popd || exit 1
+
+pushd $xen_root/tools/qemu-xen-dir-remote || exit 1
+git archive --format=tar HEAD |tar Cxf $tdir/xen-$desc/tools/qemu-xen - || exit 1
+popd || exit 1
+
+pushd $tdir
+GZIP=-9v tar zcf $xen_root/dist/xen-$desc.tar.gz xen-$desc
+popd
+
+echo "Tarball in $xen_root/dist/xen-$desc.tar.gz"

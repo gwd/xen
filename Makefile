@@ -152,6 +152,15 @@ world:
 debball: dist
 	fakeroot sh ./tools/misc/mkdeb $(XEN_ROOT) $$($(MAKE) -C xen xenversion | grep -v :)
 
+# Make a source tarball
+.PHONY: src-tarball
+src-tarball: 
+	$(MAKE) -C tools qemu-xen-dir-find
+	$(MAKE) -C tools qemu-xen-dir-force-update
+	$(MAKE) -C tools qemu-xen-traditional-dir-find
+	$(MAKE) -C tools qemu-xen-traditional-dir-force-update
+	bash ./tools/misc/mktarball $(XEN_ROOT) $$($(MAKE) -C xen xenversion --no-print-directory)
+
 # clean doesn't do a kclean
 .PHONY: clean
 clean::
@@ -182,13 +191,6 @@ endif
 # Linux name for GNU distclean
 .PHONY: mrproper
 mrproper: distclean
-
-# Prepare for source tarball
-.PHONY: src-tarball
-src-tarball: distclean
-	$(MAKE) -C xen .banner
-	rm -rf xen/tools/figlet .[a-z]*
-	$(MAKE) -C xen distclean
 
 .PHONY: help
 help:
@@ -228,6 +230,9 @@ help:
 	@echo '  build-tboot      - download and build the tboot module'
 	@echo '  install-tboot    - download, build, and install the tboot module'
 	@echo '  clean-tboot      - clean the tboot module if it exists'
+	@echo
+	@echo 'Tarball targets:'
+	@echo '  src-tarball      - make a source tarball with xen and qemu suitable for a release'
 	@echo
 	@echo 'Environment:'
 	@echo '  [ this documentation is sadly not complete ]'
