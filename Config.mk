@@ -224,6 +224,19 @@ else
 QEMU_REMOTE ?= git://xenbits.xen.org/qemu-xen-4.4-testing.git
 endif
 
+# Specify which qemu-dm to use. This may be `ioemu' to use the old
+# Mercurial in-tree version, or a local directory, or a git URL.
+# CONFIG_QEMU ?= `pwd`/$(XEN_ROOT)/../qemu-xen.git
+ifneq (,$(wildcard $(XEN_ROOT)/tools/qemu-xen-traditional))
+CONFIG_QEMU ?= $(XEN_ROOT)/tools/qemu-xen-traditional
+else
+CONFIG_QEMU ?= $(QEMU_REMOTE)
+endif
+
+ifneq (,$(wildcard $(XEN_ROOT)/tools/qemu-xen))
+QEMU_UPSTREAM_URL ?= $(XEN_ROOT)/tools/qemu-xen
+endif
+
 ifeq ($(GIT_HTTP),y)
 OVMF_UPSTREAM_URL ?= http://xenbits.xen.org/git-http/ovmf.git
 QEMU_UPSTREAM_URL ?= http://xenbits.xen.org/git-http/qemu-upstream-4.4-testing.git
@@ -241,10 +254,6 @@ SEABIOS_UPSTREAM_TAG ?= rel-1.7.3.1
 
 ETHERBOOT_NICS ?= rtl8139 8086100e
 
-# Specify which qemu-dm to use. This may be `ioemu' to use the old
-# Mercurial in-tree version, or a local directory, or a git URL.
-# CONFIG_QEMU ?= `pwd`/$(XEN_ROOT)/../qemu-xen.git
-CONFIG_QEMU ?= $(QEMU_REMOTE)
 
 QEMU_TAG ?= 6ae4e588081620b141071eb010ec40aca7e12876
 # Tue Apr 8 16:50:06 2014 +0000
