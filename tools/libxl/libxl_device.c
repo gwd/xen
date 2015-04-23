@@ -278,8 +278,8 @@ int libxl__device_disk_set_backend(libxl__gc *gc, libxl_device_disk *disk) {
     } else {
         ok=
             disk_try_backend(&a, LIBXL_DISK_BACKEND_PHY) ?:
-            disk_try_backend(&a, LIBXL_DISK_BACKEND_QDISK) ?:
-            disk_try_backend(&a, LIBXL_DISK_BACKEND_TAP);
+            disk_try_backend(&a, LIBXL_DISK_BACKEND_TAP) ?:
+            disk_try_backend(&a, LIBXL_DISK_BACKEND_QDISK);
         if (ok)
             LOG(DEBUG, "Disk vdev=%s, using backend %s",
                        disk->vdev,
