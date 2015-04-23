@@ -731,7 +731,8 @@ static char ** libxl__build_device_model_args_new(libxl__gc *gc,
                 if (disks[i].backend == LIBXL_DISK_BACKEND_TAP) {
                     format = qemu_disk_format_string(LIBXL_DISK_FORMAT_RAW);
                     pdev_path = libxl__blktap_devpath(gc, disks[i].pdev_path,
-                                                      disks[i].format);
+                                                      disks[i].format,
+                                                      disks[i].readwrite);
                 } else {
                     pdev_path = disks[i].pdev_path;
                 }

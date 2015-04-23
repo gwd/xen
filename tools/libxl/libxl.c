@@ -2149,7 +2149,8 @@ static void device_disk_add(libxl__egc *egc, uint32_t domid,
             case LIBXL_DISK_BACKEND_TAP:
                 if (dev == NULL) {
                     dev = libxl__blktap_devpath(gc, disk->pdev_path,
-                                                disk->format);
+                                                disk->format,
+                                                disk->readwrite);
                     if (!dev) {
                         LOG(ERROR, "failed to get blktap devpath for %p\n",
                             disk->pdev_path);
@@ -2651,7 +2652,8 @@ void libxl__device_disk_local_initiate_attach(libxl__egc *egc,
                 break;
             case LIBXL_DISK_FORMAT_VHD:
                 dev = libxl__blktap_devpath(gc, disk->pdev_path,
-                                            disk->format);
+                                            disk->format,
+                                            disk->readwrite);
                 break;
             case LIBXL_DISK_FORMAT_QCOW:
             case LIBXL_DISK_FORMAT_QCOW2:
