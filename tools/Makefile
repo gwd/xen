@@ -186,6 +186,7 @@ subdir-all-qemu-xen-dir: qemu-xen-dir-find
 		source=.; \
 	fi; \
 	cd qemu-xen-dir; \
+	env -u CFLAGS \
 	$$source/configure --enable-xen --target-list=i386-softmmu \
 		$(QEMU_XEN_ENABLE_DEBUG) \
 		--prefix=$(PREFIX) \
