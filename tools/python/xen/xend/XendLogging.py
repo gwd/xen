@@ -132,7 +132,11 @@ def init(filename, level):
         fileHandler = openFileHandler(filename)
         logfilename = filename
     except IOError:
-        logfilename = tempfile.mkstemp("-xend.log")[1]
+        try:
+            logfilename = tempfile.mkstemp("-xend.log")[1]
+        except IOError:
+            print >>sys.stderr, ('xend/XendLogging.py: Unable to open standard or temporary log file for xend')
+            os._exit(1)
         fileHandler = openFileHandler(logfilename)
 
     fileHandler.setFormatter(logging.Formatter(LOGFILE_FORMAT, DATE_FORMAT))
