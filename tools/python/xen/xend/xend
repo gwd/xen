@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python -Es
 #  -*- mode: python; -*-
 #============================================================================
 # Copyright (C) 2004 Mike Wray <mike.wray@hp.com>

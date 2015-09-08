@@ -325,7 +325,8 @@ class Daemon:
     def set_user(self):
         # Set the UID.
         try:
-            os.setuid(pwd.getpwnam(XEND_USER)[2])
+            if XEND_USER != "root":
+                os.setuid(pwd.getpwnam(XEND_USER)[2])
             return 0
         except KeyError:
             print >>sys.stderr, "Error: no such user '%s'" % XEND_USER
