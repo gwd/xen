@@ -13,6 +13,8 @@ export BASEDIR := $(CURDIR)
 export XEN_ROOT := $(BASEDIR)/..
 
 EFI_MOUNTPOINT ?= /boot/efi
+EFI_VENDOR=fedora
+LD_EFI ?= $(LD)
 
 .PHONY: default
 default: build
