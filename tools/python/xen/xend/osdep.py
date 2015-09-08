@@ -22,7 +22,7 @@ import commands
 
 _xend_autorestart = {
     "NetBSD": True,
-    "Linux": True,
+    "Linux": False,
     "SunOS": False,
 }
 

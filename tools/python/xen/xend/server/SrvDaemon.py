@@ -110,7 +110,14 @@ class Daemon:
         # Fork, this allows the group leader to exit,
         # which means the child can never again regain control of the
         # terminal
-        if os.fork():
+        child = os.fork()
+        if child:
+            if not osdep.xend_autorestart:
+                pidfile = open(XEND_PID_FILE, 'w')
+                try:
+                    pidfile.write(str(child))
+                finally:
+                    pidfile.close()
             os._exit(0)
 
         # Detach from standard file descriptors, and redirect them to
