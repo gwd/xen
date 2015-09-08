@@ -115,6 +115,13 @@ create_bridge () {
 	brctl addbr ${bridge}
 	brctl stp ${bridge} off
 	brctl setfd ${bridge} 0
+	# Setting these to zero stops guest<->LAN traffic
+	# traversing the bridge from hitting the *tables
+	# rulesets. guest<->host traffic still gets processed
+	# by the host's iptables rules so this isn't a hole
+	sysctl -q -w "net.bridge.bridge-nf-call-arptables=0"
+	sysctl -q -w "net.bridge.bridge-nf-call-ip6tables=0"
+	sysctl -q -w "net.bridge.bridge-nf-call-iptables=0"
     fi
 }
 
