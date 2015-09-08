@@ -119,6 +119,7 @@ def get_partition_offsets(file):
     fd = os.open(file, os.O_RDONLY)
     buf = os.read(fd, 512)
     os.close(fd)
+    offzerocount = 0
     for poff in (446, 462, 478, 494): # partition offsets
 
         # MBR contains a 16 byte descriptor per partition
@@ -128,6 +129,7 @@ def get_partition_offsets(file):
         
         # offset == 0 implies this partition is not enabled
         if offset == 0:
+            offzerocount += 1
             continue
 
         if type == FDISK_PART_SOLARIS or type == FDISK_PART_SOLARIS_OLD:
@@ -148,6 +150,9 @@ def get_partition_offsets(file):
         else:
             part_offs.append(offset)
 
+    if offzerocount == 4:
+        # Might be a grub boot sector pretending to be an MBR
+        part_offs.append(0)
     return part_offs
 
 class GrubLineEditor(curses.textpad.Textbox):
